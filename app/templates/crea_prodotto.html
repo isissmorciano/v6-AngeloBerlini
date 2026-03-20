@@ -7,7 +7,7 @@
     <select name="prodotti_id" id="prodotti_id" required>
         <option value="">Seleziona una categoria</option>
         {% for categoria in categorie %}
-        <option value="{{ categoria['id'] }}">{{ categoria['nome'] }}</option>
+        <option value="{{ categorie['id'] }}">{{ categorie['nome'] }}</option>
         {% endfor %}
     </select>
 

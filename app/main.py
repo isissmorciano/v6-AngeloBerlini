@@ -46,11 +46,15 @@ def create_category():
             # Creiamo la categoria
             categoria_repository.create_category(nome)
             return redirect(url_for("main.index"))
+    
+    categoria = categoria_repository.get_all_categories()
+    return render_template("crea_categoria.html",categoria = categoria)
+    
         
 @bp.route("/crea_prodotto", methods=("GET", "POST"))
 def crea_prodotto():
     if request.method == "POST":
-        categoria_id = request.form.get("categoria_id", type=int)
+        categoria_id = request.form.get("categorie_id", type=int)
         nome = request.form["nome"]
         prezzo = request.form["prezzo"]
         error = None
@@ -70,4 +74,26 @@ def crea_prodotto():
             # Creiamo il video
             product_repository.create_product(categoria_id, nome, prezzo)
             return redirect(url_for("main.categoria_detail", id=categoria_id))
+    
+    prodotto = product_repository.get_all_products()
+    return render_template("crea_prodotto.html",prodotto=prodotto)
         
+
+@bp.route("/ricerca_prodotto",methods=("GET", "POST"))
+def ricerca_prodotto():
+    if request.method == "POST":
+        search_term = request.form["ricerca"]
+        error = None
+
+        if not search_term:
+            error = "inserire il termine di ricerca"
+
+        if error is not None:
+            flash(error)
+        else:
+            # Creiamo il video
+            product_repository.find_products_by_name(search_term)
+            return redirect(url_for("main.categoria_detail", search_term = search_term))
+        
+    
+
