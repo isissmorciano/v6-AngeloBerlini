@@ -48,3 +48,12 @@ def create_product(catergory_id,nome,prezzo):
     )
     db.commit()
     return cursor.lastrowid
+
+
+
+def find_products_by_name(search_term):
+    db = get_db()
+    # %testo% → contiene  |  testo% → inizia con  |  %testo → finisce con
+    query = 'SELECT * FROM prodotti JOIN categorie ON prodotti.categoria_id = categorie.id WHERE prodotti.nome LIKE ? ORDER BY categoria.nome ASC'
+    prodotti = db.execute(query, (f'%{search_term}%',)).fetchall()
+    return [dict(prodotto) for prodotto in prodotti]

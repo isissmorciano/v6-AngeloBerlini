@@ -1,8 +1,3 @@
-#   - `GET /categoria/<id>` → dettaglio categoria con lista prodotti
-#   - `GET /crea_categoria` → form per nuova categoria
-#   - `POST /crea_categoria` → salva categoria nel DB
-#   - `GET /crea_prodotto` → form per nuovo prodotto (select categoria)
-#   - `POST /crea_prodotto` → salva prodotto nel DB
 
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
@@ -36,3 +31,43 @@ def category_detail(id):
     # 3. Passiamo al template
     return render_template("categoria_detail.html", category=category, categories=categories)
 
+@bp.route("/create_category", methods=("GET", "POST"))
+def create_category():
+    if request.method == "POST":
+        nome = request.form["nome"]
+        error = None
+
+        if not nome:
+            error = "Il nome è obbligatorio."
+
+        if error is not None:
+            flash(error)
+        else:
+            # Creiamo la categoria
+            categoria_repository.create_category(nome)
+            return redirect(url_for("main.index"))
+        
+@bp.route("/crea_prodotto", methods=("GET", "POST"))
+def crea_prodotto():
+    if request.method == "POST":
+        categoria_id = request.form.get("categoria_id", type=int)
+        nome = request.form["nome"]
+        prezzo = request.form["prezzo"]
+        error = None
+
+        if not nome:
+            error = "Il nome è obbligatorio."
+        
+        
+        if prezzo is None or prezzo <= 0:
+            error = "Il prezzo deve essere un numero positivo."
+        
+        
+
+        if error is not None:
+            flash(error)
+        else:
+            # Creiamo il video
+            product_repository.create_product(categoria_id, nome, prezzo)
+            return redirect(url_for("main.categoria_detail", id=categoria_id))
+        
